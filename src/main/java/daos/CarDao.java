@@ -68,6 +68,7 @@ public abstract class CarDao implements DAO {
     }
 
     public boolean updateCar(Car cars) throws SQLException {
+        //https://dzone.com/articles/building-simple-data-access-layer-using-jdbc
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE car SET id=?, make=?, model=? , year=?, color=?WHERE id=?");
             ps.setInt(1, car.getId());
