@@ -1,13 +1,15 @@
 package models;
 
-import daos.CarDao;
+import models.Car;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static java.sql.DriverManager.getConnection;
 
 public class Connections {
 
@@ -17,45 +19,53 @@ public class Connections {
     public static final String PASS = "spaz3286";
     static Logger demoLog = Logger.getLogger("demoJDBC");
 
-    public static Connection getConnection() {
-        try {
-
-            return DriverManager.getConnection(URL, USER, PASS);
-        } catch (SQLException ex) {
-            throw new RuntimeException("Error connecting to the database", ex);
-        }
-    }
-
     public static void main(String[] agrs) throws SQLException {
-        CarDao carDao = new CarDao();
-        demoLog.log(Level. INFO, "SomeStuff");
+        Car car = new Car();
+        demoLog.log(Level.INFO, "SomeStuff");
         System.out.println(("I hope this works"));
         try {
             // The newInstance() call is a work around for some
             // broken Java implementations
             System.out.println("connected");
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-        }
-        catch(ClassNotFoundException e) {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
             System.out.println("MySQL JDBC Driver not found!");// handle the error
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
             return;
         }
         System.out.println("MySQL JDBC Driver Registered");
         Connection connection = null;
-        try{
-            connection = DriverManager.getConnection(URL, USER, PASS);
+        try {
+            connection = getConnection(URL, USER, PASS);
             System.out.println("SQL Connection to database established!");
-            Statement stmt = connection.createStatement();
 
-        }
-        catch (SQLException e) {
+            Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+
+            ResultSet rs = stmt.executeQuery("SELECT * FROM car");
+            System.out.println("Contents of the table: ");
+            rs.beforeFirst();
+            while(rs.next()) {
+                System.out.println("ID: " + rs.getInt("id"));
+                System.out.println("Make: " + rs.getString("make"));
+                System.out.println("Model: " + rs.getString("model"));
+                System.out.println("Color:" + rs.getString("color"));
+            }
+            System.out.println();
+            rs.beforeFirst();
+            while(rs.next()) {
+                String newColor = rs.getString("color") + " , choice";
+                rs.updateString("color", newColor);
+                rs.updateRow();
+                System.out.println();
+            }
+            return;
+
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             System.out.println("Connection failed!");
             return;
         }
     }
 }
+
+
+

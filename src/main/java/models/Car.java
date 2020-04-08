@@ -1,16 +1,22 @@
 package models;
 
 public class Car {
-    private int id;
-    private String make;
+
     private String model;
     private int year;
     private String color;
-
-
+    public int getId;
+    private int id;
+    private String make;
 
     public Car() {
+    }
+    public int getGetId() {
+        return getId;
+    }
 
+    public void setGetId(int getId) {
+        this.getId = getId;
     }
 
     public Car(int id, String make, String model, int year, String color) {
@@ -19,7 +25,6 @@ public class Car {
         this.model = model;
         this.year = year;
         this.color = color;
-
     }
 
     public int getId() {
@@ -60,5 +65,8 @@ public class Car {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public void getexecuteQuery(String s) {
     }
 }
